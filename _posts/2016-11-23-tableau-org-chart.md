@@ -11,20 +11,20 @@ Because we didn’t know in advance the number of employees to be included in th
 (https://public.tableau.com/profile/nathan.smith#!/vizhome/DunderMifflin/DunderMifflinOrgChart)
 You can also download the source spreadsheet and Tableau workbook from [my GitHub repository.] (https://github.com/smithna/org-chart)
 
-![Employee, manager, and direct reports laid out in crow's foot diagram](./images/2016-11-23-tableau-org-chart/oc-crows-foot.PNG "Employee with manager and direct reports")
+![Employee, manager, and direct reports laid out in crow's foot diagram](/images/2016-11-23-tableau-org-chart/oc-crows-foot.PNG "Employee with manager and direct reports")
 
 
 ## Tableau Data Source
 For the proof of concept, I used a very simple spreadsheet with three columns: Employee, Manager, and Job Title. This made it easy for someone else to update the data for the org chart. You could add other descriptive columns.
 
-![Sample of spreadsheet design](./images/2016-11-23-tableau-org-chart/oc-spreadsheet.PNG "Simple spreadsheet design")
+![Sample of spreadsheet design](/images/2016-11-23-tableau-org-chart/oc-spreadsheet.PNG "Simple spreadsheet design")
 
   
 To draw a line on a map, Tableau requires a record for the starting point and the ending point. The records for the start and end must both have the same label so that Tableau knows they go together. For example to draw a line from Ryan Howard to Michael Scott, I need two Ryan Howard-Michael Scott records: one with Ryan’s coordinates and one with Michael’s coordinates. Because I am displaying the links from employee to manager and from employee to direct reports, I need four copies of the spreadsheet in Tableau.
 
 Create a new Tableau workbook and connect to your Excel spreadsheet. Remove the sheet that opens by default in the data source window. Drag “New Union” under the sheets pane on the data source window. Put four copies of your Excel sheet into the union window. 
 
-![Four copies of the spreadsheet in a union](./images/2016-11-23-tableau-org-chart/oc-union.PNG "Add four copies of the spreadsheet to a union.")
+![Four copies of the spreadsheet in a union](/images/2016-11-23-tableau-org-chart/oc-union.PNG "Add four copies of the spreadsheet to a union.")
 
 
 After you click OK, double click on the name “Union” and change it to “Connections”.
@@ -32,24 +32,24 @@ After you click OK, double click on the name “Union” and change it to “Con
  
 Now drag another copy of your sheet onto the data window to join to the union data. Double click on the new sheet and change the name from “Sheet14” to “Managed By.” Click on the connection and change the join type to left. The field on the left should be “Manager” and the field on the right should be “Employee”. This will allow you to relate each employee to his or her manager.
 
-![Join for managers](./images/2016-11-23-tableau-org-chart/oc-manager-join.PNG "Join configuration for managers.")
+![Join for managers](/images/2016-11-23-tableau-org-chart/oc-manager-join.PNG "Join configuration for managers.")
  
 Drag another copy of the sheet onto the data window. Double click on the new sheet name and change the name to “Indirect Manager.” Click the connection and change the join type to left. The field on the left should be “Manager” in "Managed By" (the copy of the sheet you added in the previous step, not the union). The field on the right should be “Employee” in “Indirect Manager” (your latest copy of the sheet). This will tell you if there are more managers above the employee’s direct manager.
 
-![Join for indirect managers](./images/2016-11-23-tableau-org-chart/oc-indirect-manager-join.PNG "Join configuration for indirect managers.")
+![Join for indirect managers](/images/2016-11-23-tableau-org-chart/oc-indirect-manager-join.PNG "Join configuration for indirect managers.")
 
 Drag another cop of the sheet onto the data window. Change the sheet name to “Manages.” Change the join type to Left. Make the field on the left “Employee” from the union data and the field on the right “Manager” in the latest copy of your sheet. This will allow you to relate each employee to their direct reports.
 
-![Join for direct reports](./images/2016-11-23-tableau-org-chart/oc-report-join.PNG "Join configuration for direct reports.")
+![Join for direct reports](/images/2016-11-23-tableau-org-chart/oc-report-join.PNG "Join configuration for direct reports.")
 
 Drag one last copy of the sheet onto the data window. Change the sheet name to “Indirect Reports.” Change the join type to left. The field on the left should be “Employee” in "Manages" (the copy of the sheet you added in the previous step, not the union). The field on the right should be “Manager” in “Indirect Reports” (your latest copy of the sheet). This will tell you if there are more reports below the employee’s direct reports.
 
-![Join for indirect reports](./images/2016-11-23-tableau-org-chart/oc-indirect-report-join.PNG "Join configuration for indirect reports.")
+![Join for indirect reports](/images/2016-11-23-tableau-org-chart/oc-indirect-report-join.PNG "Join configuration for indirect reports.")
 
 ## Calculated Fields
 Now we can go to the first Tableau worksheet in your workbook. All of the fields in the joined worksheets have long names that were auto-generated by Tableau. Right click all these fields and rename them to include the name of the data source they are coming from. For example change “Job Title (Sheet14) #1” to  “Job Title (Indirect Manager)”. This will make your calculations more understandable.
 
-![Renamed fields](./images/2016-11-23-tableau-org-chart/oc-rename-fields.PNG "Renamed fields.")
+![Renamed fields](/images/2016-11-23-tableau-org-chart/oc-rename-fields.PNG "Renamed fields.")
  
 Create a calculated field called “Connection”. This is the link between the endpoints of the lines. Tableau has given each table in the union a unique Table Name automatically. Sheet1 represents the manager in the employee-to-manager line. Sheet11 represents the employee on the employee-to-manager line. Sheet12 represents the employee in the employee-to-report line. Sheet 13 represents the report in the employee-to-report line. So our connection formula looks like this.
 
@@ -84,7 +84,7 @@ We need to know how many direct reports there are below the employee to calculat
 
 When we lay out the direct reports below the manager, we might need to split them up into multiple rows. Create a new integer parameter called “Nodes in a Row” that we can adjust to control the layout.
  
-![Nodes in a Row parameter configuration](./images/2016-11-23-tableau-org-chart/oc-nodes-in-a-row.PNG "Nodes in a Row parameter configuration.")
+![Nodes in a Row parameter configuration](/images/2016-11-23-tableau-org-chart/oc-nodes-in-a-row.PNG "Nodes in a Row parameter configuration.")
 
 To calculate the X and Y position, we need to number the direct reports, starting with 0. Create a field called “Manages Rank” with this formula.
 
@@ -141,7 +141,7 @@ Now we’re ready to layout the visualization. We will do a dual axis chart with
 
 Put X on the columns and Y on the rows. On the marks card, change the marks from automatic to line. Put Employee Label on the filter card and exclude null values. Put Employee from the Connections data source on the filter as well and select one employee to be the center of your org chart. Put the Connection calculated field on the detail card. Put the Table Name field from the Connections data set there too. Your visualization will look something like this, which doesn’t look like you might have imagined, but don’t panic!
  
-![Line layout before table calculation](./images/2016-11-23-tableau-org-chart/oc-layout-step-one.PNG "Line layout before table calculation edit.")
+![Line layout before table calculation](/images/2016-11-23-tableau-org-chart/oc-layout-step-one.PNG "Line layout before table calculation edit.")
 
 You can see the triangles next to X and Y indicating that they are table calculations. Click on the drop down next to X choose edit table calculation. Choose Compute Using “Specific Dimensions” and check the box next to “Connection.”
  
@@ -149,7 +149,7 @@ Edit the table calculation for Y and set it the same way as X.
 
 Right click the Y axis to edit it. Select the Reversed check box under scale. Now we’re looking much closer to the finished product.
 
-![Line chart with table calculation](./images/2016-11-23-tableau-org-chart/oc-layout-step-two.PNG "Line chart with table calculation.")
+![Line chart with table calculation](/images/2016-11-23-tableau-org-chart/oc-layout-step-two.PNG "Line chart with table calculation.")
 
 Next we want to create circles to represent the employees at the end of each of the lines. Drag the Y calculated field to the right side of the chart so that it creates a dual axis chart. This will break the table calculation for your line chart, but we’ll fix it later. Right click the Y axis on the right side of the chart and tell it to synchronize the axis.
 Change the mark type on the second Y axis to circles, and adjust the size on the size to make the circles bigger.
@@ -161,26 +161,26 @@ Put “Max Employee Label” on the detail card. This is for the filter action.
 
 Here’s what my final marks card looks like for the secondary axis.
 
-![Secondary axis marks card](./images/2016-11-23-tableau-org-chart/oc-marks-secondary.PNG "Secondary axis marks card.")
+![Secondary axis marks card](/images/2016-11-23-tableau-org-chart/oc-marks-secondary.PNG "Secondary axis marks card.")
 
 Now we need to edit the level of detail connections for the X on the columns and Y on the secondary rows axis. Edit the table calculation for Y and choose “Specific Dimensions.” Check the box next to all dimensions except for “Table Name.” If you add more dimensions to the marks card, you will need to come back here and check their boxes in the Y table calculation.
 
-![Secondary Y table calculation configuration](./images/2016-11-23-tableau-org-chart/oc-secondary-y-table-calc.PNG "Secondary Y table calculation configuration.")
+![Secondary Y table calculation configuration](/images/2016-11-23-tableau-org-chart/oc-secondary-y-table-calc.PNG "Secondary Y table calculation configuration.")
   
 Edit the table calculation on X. Select “Specific Dimensions” and check every dimension except for “Table Name” as you did on the secondary Y. Click the triangle next to “Automatic Sort” and change to custom sort. Sort on “Employee Label”, Maximum.
 
-![X table calculation configuration](./images/2016-11-23-tableau-org-chart/oc-x-table-calc.PNG "X table calculation configuration.")
+![X table calculation configuration](/images/2016-11-23-tableau-org-chart/oc-x-table-calc.PNG "X table calculation configuration.")
  
 We’re almost done. Your viz should look like this.
  
-![Final layout](./images/2016-11-23-tableau-org-chart/oc-almost-done.PNG "Final layout.")
+![Final layout](/images/2016-11-23-tableau-org-chart/oc-almost-done.PNG "Final layout.")
 
 ## Final Touches
 Right click the Y axis on the left and unselect the check check mark for “Show Header.” The axis label and tick marks will disappear. Do the same thing for the Y axis on the right. Right click the X axis and choose “Edit axis.” Uncheck the box for “Include zero” and click OK. Right click the axis again and uncheck “Show Header.”
 
 From the worksheet menu, choose “Actions.” Click “Add action” and choose a filter action. Under “Target Filters” choose “Selected Fields.” For the Data Source field choose “Max Employee Label,” and for the Target field choose Employee.
 
-![Filter action configuration](./images/2016-11-23-tableau-org-chart/oc-filter-action.PNG "Filter action configuration.")
+![Filter action configuration](/images/2016-11-23-tableau-org-chart/oc-filter-action.PNG "Filter action configuration.")
  
 Now you should have a working viz. The rest is cosmetic tiding up. 
 
